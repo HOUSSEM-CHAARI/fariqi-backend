@@ -1,0 +1,83 @@
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.JoueurController = void 0;
+const common_1 = require("@nestjs/common");
+const joueur_service_1 = require("./joueur.service");
+const create_joueur_dto_1 = require("./dto/create-joueur.dto");
+const update_joueur_dto_1 = require("./dto/update-joueur.dto");
+let JoueurController = class JoueurController {
+    joueurService;
+    constructor(joueurService) {
+        this.joueurService = joueurService;
+    }
+    async create(dto) {
+        return this.joueurService.create(dto);
+    }
+    findAll() {
+        return this.joueurService.findAll();
+    }
+    findOne(id) {
+        return this.joueurService.findOne(+id);
+    }
+    update(id, dto) {
+        return this.joueurService.update(+id, dto);
+    }
+    remove(id) {
+        return this.joueurService.remove(+id).then(() => ({
+            message: `Joueur avec l'id ${id} supprimé.`,
+        }));
+    }
+};
+exports.JoueurController = JoueurController;
+__decorate([
+    (0, common_1.Post)(),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [create_joueur_dto_1.CreateJoueurDto]),
+    __metadata("design:returntype", Promise)
+], JoueurController.prototype, "create", null);
+__decorate([
+    (0, common_1.Get)(),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], JoueurController.prototype, "findAll", null);
+__decorate([
+    (0, common_1.Get)(':id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], JoueurController.prototype, "findOne", null);
+__decorate([
+    (0, common_1.Put)(':id'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, update_joueur_dto_1.UpdateJoueurDto]),
+    __metadata("design:returntype", Promise)
+], JoueurController.prototype, "update", null);
+__decorate([
+    (0, common_1.Delete)(':id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], JoueurController.prototype, "remove", null);
+exports.JoueurController = JoueurController = __decorate([
+    (0, common_1.Controller)('joueur'),
+    __metadata("design:paramtypes", [joueur_service_1.JoueurService])
+], JoueurController);
+//# sourceMappingURL=joueur.controller.js.map
