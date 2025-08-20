@@ -11,6 +11,8 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const coach_module_1 = require("./coach/coach.module");
 const joueur_module_1 = require("./joueur/joueur.module");
+const kine_module_1 = require("./kine/kine.module");
+const preparateur_module_1 = require("./preparateur/preparateur.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -29,6 +31,8 @@ exports.AppModule = AppModule = __decorate([
             }),
             coach_module_1.CoachModule,
             joueur_module_1.JoueurModule,
+            kine_module_1.KineModule,
+            preparateur_module_1.PreparateurModule,
         ],
     })
 ], AppModule);
