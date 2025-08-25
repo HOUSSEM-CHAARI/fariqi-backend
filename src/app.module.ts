@@ -5,7 +5,7 @@ import { CoachModule } from './coach/coach.module';
 import { JoueurModule } from './joueur/joueur.module';
 import { KineModule } from './kine/kine.module';
 import { PreparateurModule } from './preparateur/preparateur.module';
-
+import { AuthCoachModule } from './auth-coach/auth-coach.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -22,6 +22,7 @@ import { PreparateurModule } from './preparateur/preparateur.module';
     JoueurModule,
     KineModule,
     PreparateurModule,
+    AuthCoachModule,
   ],
 })
 export class AppModule {}

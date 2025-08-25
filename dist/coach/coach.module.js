@@ -12,14 +12,23 @@ const typeorm_1 = require("@nestjs/typeorm");
 const coach_entity_1 = require("./coach.entity");
 const coach_service_1 = require("./coach.service");
 const coach_controller_1 = require("./coach.controller");
+const jwt_1 = require("@nestjs/jwt");
+const auth_coach_service_1 = require("../auth-coach/auth-coach.service");
+const coach_jwt_strategy_1 = require("../auth-coach/coach-jwt.strategy");
 let CoachModule = class CoachModule {
 };
 exports.CoachModule = CoachModule;
 exports.CoachModule = CoachModule = __decorate([
     (0, common_1.Module)({
-        imports: [typeorm_1.TypeOrmModule.forFeature([coach_entity_1.Coach])],
+        imports: [
+            typeorm_1.TypeOrmModule.forFeature([coach_entity_1.Coach]),
+            jwt_1.JwtModule.register({
+                secret: 'coachSecretKey',
+                signOptions: { expiresIn: '1d' },
+            }),
+        ],
         controllers: [coach_controller_1.CoachController],
-        providers: [coach_service_1.CoachService],
+        providers: [coach_service_1.CoachService, auth_coach_service_1.AuthCoachService, coach_jwt_strategy_1.CoachJwtStrategy],
         exports: [coach_service_1.CoachService],
     })
 ], CoachModule);

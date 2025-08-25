@@ -17,10 +17,14 @@ const common_1 = require("@nestjs/common");
 const coach_service_1 = require("./coach.service");
 const create_coach_dto_1 = require("./dto/create-coach.dto");
 const update_coach_dto_1 = require("./dto/update-coach.dto");
+const passport_1 = require("@nestjs/passport");
+const auth_coach_service_1 = require("../auth-coach/auth-coach.service");
 let CoachController = class CoachController {
     coachService;
-    constructor(coachService) {
+    authCoachService;
+    constructor(coachService, authCoachService) {
         this.coachService = coachService;
+        this.authCoachService = authCoachService;
     }
     async create(createCoachDto) {
         return this.coachService.create(createCoachDto);
@@ -36,7 +40,13 @@ let CoachController = class CoachController {
     }
     async remove(id) {
         await this.coachService.remove(id);
-        return { message: `Coach avec l'id ${id} supprimé.` };
+        return { message: `coach avec l'id ${id} supprimé.` };
+    }
+    async login(body) {
+        return this.authCoachService.validateCoach(body.email, body.password);
+    }
+    getProfile(req) {
+        return req.user;
     }
 };
 exports.CoachController = CoachController;
@@ -75,8 +85,24 @@ __decorate([
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", Promise)
 ], CoachController.prototype, "remove", null);
+__decorate([
+    (0, common_1.Post)('login'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], CoachController.prototype, "login", null);
+__decorate([
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('coach-jwt')),
+    (0, common_1.Get)('profile'),
+    __param(0, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], CoachController.prototype, "getProfile", null);
 exports.CoachController = CoachController = __decorate([
     (0, common_1.Controller)('coach'),
-    __metadata("design:paramtypes", [coach_service_1.CoachService])
+    __metadata("design:paramtypes", [coach_service_1.CoachService,
+        auth_coach_service_1.AuthCoachService])
 ], CoachController);
 //# sourceMappingURL=coach.controller.js.map
