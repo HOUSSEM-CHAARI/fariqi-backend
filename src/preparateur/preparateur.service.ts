@@ -13,36 +13,58 @@ export class PreparateurService {
     private preparateurRepository: Repository<Preparateur>,
   ) {}
 
-  async create(dto: CreatePreparateurDto): Promise<Preparateur> {
-    const existing = await this.preparateurRepository.findOne({ where: { email: dto.email } });
+  async create(createPreparateurDto: CreatePreparateurDto): Promise<Preparateur> {
+    const { first_name, last_name, email, password } = createPreparateurDto;
+
+    // Vérifier si l'email existe déjà
+    const existing = await this.preparateurRepository.findOne({ where: { email } });
     if (existing) throw new Error('Email déjà utilisé');
 
-    const hash = await bcrypt.hash(dto.password, 10);
-    const preparateur = this.preparateurRepository.create({ ...dto, password: hash });
+    // Hash du mot de passe
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const preparateur = this.preparateurRepository.create({
+      first_name,
+      last_name,
+      email,
+      password: hashedPassword,
+    });
+
     return this.preparateurRepository.save(preparateur);
   }
 
+  // Récupérer tous les préparateurs
   findAll(): Promise<Preparateur[]> {
     return this.preparateurRepository.find();
   }
 
+  // Récupérer un préparateur par ID
   async findOne(id: number): Promise<Preparateur> {
-    const user = await this.preparateurRepository.findOne({ where: { id } });
-    if (!user) throw new Error('Préparateur introuvable');
-    return user;
+    const preparateur = await this.preparateurRepository.findOne({ where: { id } });
+    if (!preparateur) {
+      throw new Error('Préparateur introuvable');
+    }
+    return preparateur;
   }
 
-  async update(id: number, dto: UpdatePreparateurDto): Promise<Preparateur> {
-    const user = await this.findOne(id);
-    if (dto.password) {
-      dto.password = await bcrypt.hash(dto.password, 10);
+  // Mise à jour d'un préparateur
+  async update(id: number, updatePreparateurDto: UpdatePreparateurDto): Promise<Preparateur> {
+    const preparateur = await this.preparateurRepository.findOne({ where: { id } });
+    if (!preparateur) {
+      throw new Error('Préparateur introuvable');
     }
-    const updated = this.preparateurRepository.merge(user, dto);
+
+    const updated = this.preparateurRepository.merge(preparateur, updatePreparateurDto);
     return this.preparateurRepository.save(updated);
   }
 
+  // Suppression d'un préparateur
   async remove(id: number): Promise<void> {
-    const user = await this.findOne(id);
-    await this.preparateurRepository.remove(user);
+    const preparateur = await this.preparateurRepository.findOne({ where: { id } });
+    if (!preparateur) {
+      throw new Error('Préparateur introuvable');
+    }
+
+    await this.preparateurRepository.delete(id);
   }
 }

@@ -6,19 +6,17 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PreparateurModule = void 0;
+exports.AuthPreparateurModule = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
-const preparateur_entity_1 = require("./preparateur.entity");
-const preparateur_service_1 = require("./preparateur.service");
-const preparateur_controller_1 = require("./preparateur.controller");
+const preparateur_entity_1 = require("../preparateur/preparateur.entity");
+const auth_preparateur_service_1 = require("./auth-preparateur.service");
 const jwt_1 = require("@nestjs/jwt");
-const auth_preparateur_service_1 = require("../auth-preparateur/auth-preparateur.service");
-const preparateur_jwt_strategy_1 = require("../auth-preparateur/preparateur-jwt.strategy");
-let PreparateurModule = class PreparateurModule {
+const preparateur_jwt_strategy_1 = require("./preparateur-jwt.strategy");
+let AuthPreparateurModule = class AuthPreparateurModule {
 };
-exports.PreparateurModule = PreparateurModule;
-exports.PreparateurModule = PreparateurModule = __decorate([
+exports.AuthPreparateurModule = AuthPreparateurModule;
+exports.AuthPreparateurModule = AuthPreparateurModule = __decorate([
     (0, common_1.Module)({
         imports: [
             typeorm_1.TypeOrmModule.forFeature([preparateur_entity_1.Preparateur]),
@@ -27,9 +25,8 @@ exports.PreparateurModule = PreparateurModule = __decorate([
                 signOptions: { expiresIn: '1d' },
             }),
         ],
-        controllers: [preparateur_controller_1.PreparateurController],
-        providers: [preparateur_service_1.PreparateurService, auth_preparateur_service_1.AuthPreparateurService, preparateur_jwt_strategy_1.PreparateurJwtStrategy],
-        exports: [preparateur_service_1.PreparateurService],
+        providers: [auth_preparateur_service_1.AuthPreparateurService, preparateur_jwt_strategy_1.PreparateurJwtStrategy],
+        exports: [auth_preparateur_service_1.AuthPreparateurService],
     })
-], PreparateurModule);
-//# sourceMappingURL=preparateur.module.js.map
+], AuthPreparateurModule);
+//# sourceMappingURL=auth-preparateur.module.js.map

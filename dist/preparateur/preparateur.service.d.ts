@@ -5,9 +5,9 @@ import { UpdatePreparateurDto } from './dto/update-preparateur.dto';
 export declare class PreparateurService {
     private preparateurRepository;
     constructor(preparateurRepository: Repository<Preparateur>);
-    create(dto: CreatePreparateurDto): Promise<Preparateur>;
+    create(createPreparateurDto: CreatePreparateurDto): Promise<Preparateur>;
     findAll(): Promise<Preparateur[]>;
     findOne(id: number): Promise<Preparateur>;
-    update(id: number, dto: UpdatePreparateurDto): Promise<Preparateur>;
+    update(id: number, updatePreparateurDto: UpdatePreparateurDto): Promise<Preparateur>;
     remove(id: number): Promise<void>;
 }

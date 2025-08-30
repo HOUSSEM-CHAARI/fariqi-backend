@@ -7,6 +7,7 @@ import { KineModule } from './kine/kine.module';
 import { PreparateurModule } from './preparateur/preparateur.module';
 import { AuthCoachModule } from './auth-coach/auth-coach.module';
 import { AuthKineModule } from './auth-kine/auth-kine.module';
+import { AuthPreparateurModule } from './auth-preparateur/auth-preparateur.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -25,6 +26,7 @@ import { AuthKineModule } from './auth-kine/auth-kine.module';
     PreparateurModule,
     AuthCoachModule,
     AuthKineModule,
+    AuthPreparateurModule,
   ],
 })
 export class AppModule {}

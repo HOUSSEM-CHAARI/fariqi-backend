@@ -45,61 +45,38 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PreparateurService = void 0;
+exports.AuthPreparateurService = void 0;
 const common_1 = require("@nestjs/common");
+const jwt_1 = require("@nestjs/jwt");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
-const preparateur_entity_1 = require("./preparateur.entity");
+const preparateur_entity_1 = require("../preparateur/preparateur.entity");
 const bcrypt = __importStar(require("bcrypt"));
-let PreparateurService = class PreparateurService {
-    preparateurRepository;
-    constructor(preparateurRepository) {
-        this.preparateurRepository = preparateurRepository;
+let AuthPreparateurService = class AuthPreparateurService {
+    preparateurRepo;
+    jwtService;
+    constructor(preparateurRepo, jwtService) {
+        this.preparateurRepo = preparateurRepo;
+        this.jwtService = jwtService;
     }
-    async create(createPreparateurDto) {
-        const { first_name, last_name, email, password } = createPreparateurDto;
-        const existing = await this.preparateurRepository.findOne({ where: { email } });
-        if (existing)
-            throw new Error('Email déjà utilisé');
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const preparateur = this.preparateurRepository.create({
-            first_name,
-            last_name,
-            email,
-            password: hashedPassword,
-        });
-        return this.preparateurRepository.save(preparateur);
-    }
-    findAll() {
-        return this.preparateurRepository.find();
-    }
-    async findOne(id) {
-        const preparateur = await this.preparateurRepository.findOne({ where: { id } });
-        if (!preparateur) {
-            throw new Error('Préparateur introuvable');
-        }
-        return preparateur;
-    }
-    async update(id, updatePreparateurDto) {
-        const preparateur = await this.preparateurRepository.findOne({ where: { id } });
-        if (!preparateur) {
-            throw new Error('Préparateur introuvable');
-        }
-        const updated = this.preparateurRepository.merge(preparateur, updatePreparateurDto);
-        return this.preparateurRepository.save(updated);
-    }
-    async remove(id) {
-        const preparateur = await this.preparateurRepository.findOne({ where: { id } });
-        if (!preparateur) {
-            throw new Error('Préparateur introuvable');
-        }
-        await this.preparateurRepository.delete(id);
+    async validatePreparateur(email, password) {
+        const preparateur = await this.preparateurRepo.findOne({ where: { email } });
+        if (!preparateur)
+            throw new common_1.UnauthorizedException('Email incorrect');
+        const isMatch = await bcrypt.compare(password, preparateur.password);
+        if (!isMatch)
+            throw new common_1.UnauthorizedException('Mot de passe incorrect');
+        const payload = { email: preparateur.email, sub: preparateur.id, role: 'preparateur' };
+        return {
+            access_token: this.jwtService.sign(payload),
+        };
     }
 };
-exports.PreparateurService = PreparateurService;
-exports.PreparateurService = PreparateurService = __decorate([
+exports.AuthPreparateurService = AuthPreparateurService;
+exports.AuthPreparateurService = AuthPreparateurService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(preparateur_entity_1.Preparateur)),
-    __metadata("design:paramtypes", [typeorm_2.Repository])
-], PreparateurService);
-//# sourceMappingURL=preparateur.service.js.map
+    __metadata("design:paramtypes", [typeorm_2.Repository,
+        jwt_1.JwtService])
+], AuthPreparateurService);
+//# sourceMappingURL=auth-preparateur.service.js.map
