@@ -14,6 +14,7 @@ const joueur_module_1 = require("./joueur/joueur.module");
 const kine_module_1 = require("./kine/kine.module");
 const preparateur_module_1 = require("./preparateur/preparateur.module");
 const auth_coach_module_1 = require("./auth-coach/auth-coach.module");
+const auth_kine_module_1 = require("./auth-kine/auth-kine.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -35,6 +36,7 @@ exports.AppModule = AppModule = __decorate([
             kine_module_1.KineModule,
             preparateur_module_1.PreparateurModule,
             auth_coach_module_1.AuthCoachModule,
+            auth_kine_module_1.AuthKineModule,
         ],
     })
 ], AppModule);

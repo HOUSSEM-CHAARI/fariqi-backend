@@ -34,10 +34,9 @@ let JoueurController = class JoueurController {
     update(id, dto) {
         return this.joueurService.update(+id, dto);
     }
-    remove(id) {
-        return this.joueurService.remove(+id).then(() => ({
-            message: `Joueur avec l'id ${id} supprimé.`,
-        }));
+    async remove(id) {
+        await this.joueurService.remove(+id);
+        return { message: `Joueur avec l'id ${id} supprimé.` };
     }
 };
 exports.JoueurController = JoueurController;

@@ -45,61 +45,38 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.KineService = void 0;
+exports.AuthKineService = void 0;
 const common_1 = require("@nestjs/common");
+const jwt_1 = require("@nestjs/jwt");
+const bcrypt = __importStar(require("bcrypt"));
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
-const kine_entity_1 = require("./kine.entity");
-const bcrypt = __importStar(require("bcrypt"));
-let KineService = class KineService {
+const kine_entity_1 = require("../kine/kine.entity");
+let AuthKineService = class AuthKineService {
     kineRepository;
-    constructor(kineRepository) {
+    jwtService;
+    constructor(kineRepository, jwtService) {
         this.kineRepository = kineRepository;
+        this.jwtService = jwtService;
     }
-    async create(createKineDto) {
-        const { first_name, last_name, email, password } = createKineDto;
-        const existing = await this.kineRepository.findOne({ where: { email } });
-        if (existing)
-            throw new Error('Email déjà utilisé');
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const kine = this.kineRepository.create({
-            first_name,
-            last_name,
-            email,
-            password: hashedPassword,
-        });
-        return this.kineRepository.save(kine);
-    }
-    findAll() {
-        return this.kineRepository.find();
-    }
-    async findOne(id) {
-        const kine = await this.kineRepository.findOne({ where: { id } });
-        if (!kine) {
-            throw new Error('Kiné introuvable');
-        }
-        return kine;
-    }
-    async update(id, updateKineDto) {
-        const kine = await this.kineRepository.findOne({ where: { id } });
-        if (!kine) {
-            throw new Error('Kiné introuvable');
-        }
-        const updatedKine = this.kineRepository.merge(kine, updateKineDto);
-        return this.kineRepository.save(updatedKine);
-    }
-    async remove(id) {
-        const kine = await this.kineRepository.findOne({ where: { id } });
-        if (!kine) {
-            throw new Error('Kiné introuvable');
-        }
-        await this.kineRepository.delete(id);
+    async validateKine(email, password) {
+        const kine = await this.kineRepository.findOne({ where: { email } });
+        if (!kine)
+            throw new common_1.UnauthorizedException('Email incorrect');
+        const passwordMatch = await bcrypt.compare(password, kine.password);
+        if (!passwordMatch)
+            throw new common_1.UnauthorizedException('Mot de passe incorrect');
+        const payload = { sub: kine.id, email: kine.email };
+        return {
+            access_token: this.jwtService.sign(payload),
+        };
     }
 };
-exports.KineService = KineService;
-exports.KineService = KineService = __decorate([
+exports.AuthKineService = AuthKineService;
+exports.AuthKineService = AuthKineService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(kine_entity_1.Kine)),
-    __metadata("design:paramtypes", [typeorm_2.Repository])
-], KineService);
-//# sourceMappingURL=kine.service.js.map
+    __metadata("design:paramtypes", [typeorm_2.Repository,
+        jwt_1.JwtService])
+], AuthKineService);
+//# sourceMappingURL=auth-kine.service.js.map

@@ -6,19 +6,17 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.KineModule = void 0;
+exports.AuthKineModule = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
-const kine_entity_1 = require("./kine.entity");
-const kine_service_1 = require("./kine.service");
-const kine_controller_1 = require("./kine.controller");
 const jwt_1 = require("@nestjs/jwt");
-const auth_kine_service_1 = require("../auth-kine/auth-kine.service");
-const kine_jwt_strategy_1 = require("../auth-kine/kine-jwt.strategy");
-let KineModule = class KineModule {
+const kine_entity_1 = require("../kine/kine.entity");
+const auth_kine_service_1 = require("./auth-kine.service");
+const kine_jwt_strategy_1 = require("./kine-jwt.strategy");
+let AuthKineModule = class AuthKineModule {
 };
-exports.KineModule = KineModule;
-exports.KineModule = KineModule = __decorate([
+exports.AuthKineModule = AuthKineModule;
+exports.AuthKineModule = AuthKineModule = __decorate([
     (0, common_1.Module)({
         imports: [
             typeorm_1.TypeOrmModule.forFeature([kine_entity_1.Kine]),
@@ -27,9 +25,8 @@ exports.KineModule = KineModule = __decorate([
                 signOptions: { expiresIn: '1d' },
             }),
         ],
-        controllers: [kine_controller_1.KineController],
-        providers: [kine_service_1.KineService, auth_kine_service_1.AuthKineService, kine_jwt_strategy_1.KineJwtStrategy],
-        exports: [kine_service_1.KineService],
+        providers: [auth_kine_service_1.AuthKineService, kine_jwt_strategy_1.KineJwtStrategy],
+        exports: [auth_kine_service_1.AuthKineService],
     })
-], KineModule);
-//# sourceMappingURL=kine.module.js.map
+], AuthKineModule);
+//# sourceMappingURL=auth-kine.module.js.map
