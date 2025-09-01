@@ -45,58 +45,38 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.JoueurService = void 0;
+exports.AuthJoueurService = void 0;
 const common_1 = require("@nestjs/common");
+const jwt_1 = require("@nestjs/jwt");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
-const joueur_entity_1 = require("./joueur.entity");
+const joueur_entity_1 = require("../joueur/joueur.entity");
 const bcrypt = __importStar(require("bcrypt"));
-let JoueurService = class JoueurService {
-    joueurRepository;
-    constructor(joueurRepository) {
-        this.joueurRepository = joueurRepository;
+let AuthJoueurService = class AuthJoueurService {
+    joueurRepo;
+    jwtService;
+    constructor(joueurRepo, jwtService) {
+        this.joueurRepo = joueurRepo;
+        this.jwtService = jwtService;
     }
-    async create(createJoueurDto) {
-        const { first_name, last_name, email, password } = createJoueurDto;
-        const existing = await this.joueurRepository.findOne({ where: { email } });
-        if (existing)
-            throw new Error('Email déjà utilisé');
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const joueur = this.joueurRepository.create({
-            first_name,
-            last_name,
-            email,
-            password: hashedPassword,
-        });
-        return this.joueurRepository.save(joueur);
-    }
-    findAll() {
-        return this.joueurRepository.find();
-    }
-    async findOne(id) {
-        const joueur = await this.joueurRepository.findOne({ where: { id } });
+    async validateJoueur(email, password) {
+        const joueur = await this.joueurRepo.findOne({ where: { email } });
         if (!joueur)
-            throw new Error('Joueur introuvable');
-        return joueur;
-    }
-    async update(id, updateJoueurDto) {
-        const joueur = await this.joueurRepository.findOne({ where: { id } });
-        if (!joueur)
-            throw new Error('Joueur introuvable');
-        const updated = this.joueurRepository.merge(joueur, updateJoueurDto);
-        return this.joueurRepository.save(updated);
-    }
-    async remove(id) {
-        const joueur = await this.joueurRepository.findOne({ where: { id } });
-        if (!joueur)
-            throw new Error('Joueur introuvable');
-        await this.joueurRepository.delete(id);
+            throw new common_1.UnauthorizedException('Email incorrect');
+        const isMatch = await bcrypt.compare(password, joueur.password);
+        if (!isMatch)
+            throw new common_1.UnauthorizedException('Mot de passe incorrect');
+        const payload = { email: joueur.email, sub: joueur.id, role: 'joueur' };
+        return {
+            access_token: this.jwtService.sign(payload),
+        };
     }
 };
-exports.JoueurService = JoueurService;
-exports.JoueurService = JoueurService = __decorate([
+exports.AuthJoueurService = AuthJoueurService;
+exports.AuthJoueurService = AuthJoueurService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(joueur_entity_1.Joueur)),
-    __metadata("design:paramtypes", [typeorm_2.Repository])
-], JoueurService);
-//# sourceMappingURL=joueur.service.js.map
+    __metadata("design:paramtypes", [typeorm_2.Repository,
+        jwt_1.JwtService])
+], AuthJoueurService);
+//# sourceMappingURL=auth-joueur.service.js.map

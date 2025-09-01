@@ -2,14 +2,21 @@ import { JoueurService } from './joueur.service';
 import { CreateJoueurDto } from './dto/create-joueur.dto';
 import { UpdateJoueurDto } from './dto/update-joueur.dto';
 import { Joueur } from './joueur.entity';
+import { AuthJoueurService } from '../auth-joueur/auth-joueur.service';
 export declare class JoueurController {
     private readonly joueurService;
-    constructor(joueurService: JoueurService);
-    create(dto: CreateJoueurDto): Promise<Joueur>;
+    private readonly authJoueurService;
+    constructor(joueurService: JoueurService, authJoueurService: AuthJoueurService);
+    create(createJoueurDto: CreateJoueurDto): Promise<Joueur>;
     findAll(): Promise<Joueur[]>;
-    findOne(id: string): Promise<Joueur>;
-    update(id: string, dto: UpdateJoueurDto): Promise<Joueur>;
-    remove(id: string): Promise<{
+    update(id: number, updateJoueurDto: UpdateJoueurDto): Promise<Joueur>;
+    findOne(id: number): Promise<Joueur>;
+    remove(id: number): Promise<{
         message: string;
     }>;
+    login(body: {
+        email: string;
+        password: string;
+    }): Promise<any>;
+    getProfile(req: any): any;
 }

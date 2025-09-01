@@ -17,26 +17,36 @@ const common_1 = require("@nestjs/common");
 const joueur_service_1 = require("./joueur.service");
 const create_joueur_dto_1 = require("./dto/create-joueur.dto");
 const update_joueur_dto_1 = require("./dto/update-joueur.dto");
+const passport_1 = require("@nestjs/passport");
+const auth_joueur_service_1 = require("../auth-joueur/auth-joueur.service");
 let JoueurController = class JoueurController {
     joueurService;
-    constructor(joueurService) {
+    authJoueurService;
+    constructor(joueurService, authJoueurService) {
         this.joueurService = joueurService;
+        this.authJoueurService = authJoueurService;
     }
-    async create(dto) {
-        return this.joueurService.create(dto);
+    async create(createJoueurDto) {
+        return this.joueurService.create(createJoueurDto);
     }
-    findAll() {
+    async findAll() {
         return this.joueurService.findAll();
     }
-    findOne(id) {
+    async update(id, updateJoueurDto) {
+        return this.joueurService.update(id, updateJoueurDto);
+    }
+    async findOne(id) {
         return this.joueurService.findOne(+id);
     }
-    update(id, dto) {
-        return this.joueurService.update(+id, dto);
-    }
     async remove(id) {
-        await this.joueurService.remove(+id);
-        return { message: `Joueur avec l'id ${id} supprimé.` };
+        await this.joueurService.remove(id);
+        return { message: `joueur avec l'id ${id} supprimé.` };
+    }
+    async login(body) {
+        return this.authJoueurService.validateJoueur(body.email, body.password);
+    }
+    getProfile(req) {
+        return req.user;
     }
 };
 exports.JoueurController = JoueurController;
@@ -54,29 +64,45 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], JoueurController.prototype, "findAll", null);
 __decorate([
-    (0, common_1.Get)(':id'),
-    __param(0, (0, common_1.Param)('id')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", Promise)
-], JoueurController.prototype, "findOne", null);
-__decorate([
     (0, common_1.Put)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, update_joueur_dto_1.UpdateJoueurDto]),
+    __metadata("design:paramtypes", [Number, update_joueur_dto_1.UpdateJoueurDto]),
     __metadata("design:returntype", Promise)
 ], JoueurController.prototype, "update", null);
+__decorate([
+    (0, common_1.Get)(':id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", Promise)
+], JoueurController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Delete)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", Promise)
 ], JoueurController.prototype, "remove", null);
+__decorate([
+    (0, common_1.Post)('login'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], JoueurController.prototype, "login", null);
+__decorate([
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('joueur-jwt')),
+    (0, common_1.Get)('profile'),
+    __param(0, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], JoueurController.prototype, "getProfile", null);
 exports.JoueurController = JoueurController = __decorate([
     (0, common_1.Controller)('joueur'),
-    __metadata("design:paramtypes", [joueur_service_1.JoueurService])
+    __metadata("design:paramtypes", [joueur_service_1.JoueurService,
+        auth_joueur_service_1.AuthJoueurService])
 ], JoueurController);
 //# sourceMappingURL=joueur.controller.js.map

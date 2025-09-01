@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Joueur } from './joueur.entity';
 import { Repository } from 'typeorm';
+import { Joueur } from './joueur.entity';
 import { CreateJoueurDto } from './dto/create-joueur.dto';
 import { UpdateJoueurDto } from './dto/update-joueur.dto';
 import * as bcrypt from 'bcrypt';
@@ -13,13 +13,23 @@ export class JoueurService {
     private joueurRepository: Repository<Joueur>,
   ) {}
 
-  async create(dto: CreateJoueurDto): Promise<Joueur> {
-    const existing = await this.joueurRepository.findOne({ where: { email: dto.email } });
+  async create(createJoueurDto: CreateJoueurDto): Promise<Joueur> {
+    const { first_name, last_name, email, password } = createJoueurDto;
+
+    // Vérifier si l'email existe déjà
+    const existing = await this.joueurRepository.findOne({ where: { email } });
     if (existing) throw new Error('Email déjà utilisé');
 
-    const hash = await bcrypt.hash(dto.password, 10);
+    // Hash du mot de passe
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    const joueur = this.joueurRepository.create({ ...dto, password: hash });
+    const joueur = this.joueurRepository.create({
+      first_name,
+      last_name,
+      email,
+      password: hashedPassword,
+    });
+
     return this.joueurRepository.save(joueur);
   }
 
@@ -33,19 +43,18 @@ export class JoueurService {
     return joueur;
   }
 
-  async update(id: number, dto: UpdateJoueurDto): Promise<Joueur> {
-    const joueur = await this.findOne(id);
+  async update(id: number, updateJoueurDto: UpdateJoueurDto): Promise<Joueur> {
+    const joueur = await this.joueurRepository.findOne({ where: { id } });
+    if (!joueur) throw new Error('Joueur introuvable');
 
-    if (dto.password) {
-      dto.password = await bcrypt.hash(dto.password, 10);
-    }
-
-    const updated = this.joueurRepository.merge(joueur, dto);
+    const updated = this.joueurRepository.merge(joueur, updateJoueurDto);
     return this.joueurRepository.save(updated);
   }
 
   async remove(id: number): Promise<void> {
-    const joueur = await this.findOne(id);
-    await this.joueurRepository.remove(joueur);
+    const joueur = await this.joueurRepository.findOne({ where: { id } });
+    if (!joueur) throw new Error('Joueur introuvable');
+
+    await this.joueurRepository.delete(id);
   }
 }

@@ -16,6 +16,7 @@ const preparateur_module_1 = require("./preparateur/preparateur.module");
 const auth_coach_module_1 = require("./auth-coach/auth-coach.module");
 const auth_kine_module_1 = require("./auth-kine/auth-kine.module");
 const auth_preparateur_module_1 = require("./auth-preparateur/auth-preparateur.module");
+const auth_joueur_module_1 = require("./auth-joueur/auth-joueur.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -39,6 +40,7 @@ exports.AppModule = AppModule = __decorate([
             auth_coach_module_1.AuthCoachModule,
             auth_kine_module_1.AuthKineModule,
             auth_preparateur_module_1.AuthPreparateurModule,
+            auth_joueur_module_1.AuthJoueurModule,
         ],
     })
 ], AppModule);
